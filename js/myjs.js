@@ -6,10 +6,10 @@
 
     // If absolute URL from the remote server is provided, configure the CORS
     // header on that server.
-    var url = 'https://github.com/Arouven/aboutme/mypdf/helloworld.pdf';
+    var url = 'mypdf/helloworld.pdf';
 
     // The workerSrc property shall be specified.
-    pdfjsLib.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+    pdfjsLib.workerSrc = 'pdfjs/pdf.worker.js';
 
     pdfjsLib.getDocument(url).then(function (pdf) {
         var pdfDocument = pdf;
