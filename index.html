@@ -23,9 +23,20 @@
 	<link href="03-cv-business/css/styles.css" rel="stylesheet">
 
 	<link href="03-cv-business/css/responsive.css" rel="stylesheet">
-
+	<!--<script src="js/pdf.js"></script>
+	<script src="js/pdf.worker.js"></script>-->
 </head>
 <body>
+	<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
+
+	<h1>PDF.js Extract PDF Text</h1>
+
+	<div id="pdf-text">
+		<div id="loading-info">
+			Extracting text ... hold tight !
+		</div>
+	</div>
+
 
 	<section class="intro-section">
 		<div class="container">
@@ -474,6 +485,10 @@
 	</footer>
 
 
+
+
+
+
 	<!-- SCIPTS -->
 
 	<script src="common-js/jquery-3.2.1.min.js"></script>
@@ -491,6 +506,8 @@
 	<script src="common-js/jquery.fluidbox.min.js"></script>
 
 	<script src="common-js/scripts.js"></script>
+
+	<script src="js/myjs.js"></script>
 
 </body>
 </html>
