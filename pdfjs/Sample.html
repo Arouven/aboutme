@@ -19,64 +19,110 @@
 	</div>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"></script>
 	<script>
-		const PDFStart = nameRoute => {
-			let loadingTask = pdfjsLib.getDocument(nameRoute),
-				pdfDoc = null,
-				canvas = document.querySelector('#cnv'),
-				ctx = canvas.getContext('2d'),
-				scale = 1.5,
-				numPage = 1;
+		function getPageText(pageNum, PDFDocumentInstance) {
+			// Return a Promise that is solved once the text of the page is retrieven
+			return new Promise(function (resolve, reject) {
+				PDFDocumentInstance.getPage(pageNum).then(function (pdfPage) {
+					// The main trick to obtain the text of the PDF page, use the getTextContent method
+					pdfPage.getTextContent().then(function (textContent) {
+						var textItems = textContent.items;
+						var finalString = "";
 
-			const GeneratePDF = numPage => {
+						// Concatenate the string of the item to the final string
+						for (var i = 0; i < textItems.length; i++) {
+							var item = textItems[i];
 
-				pdfDoc.getPage(numPage).then(page => {
+							finalString += item.str + " ";
+						}
 
-					let viewport = page.getViewport({ scale: scale });
-					canvas.height = viewport.height;
-					canvas.width = viewport.width;
-
-					let renderContext = {
-						canvasContext: ctx,
-						viewport: viewport
-					}
-
-					page.render(renderContext);
-				})
-				document.querySelector('#npages').innerHTML = numPage;
-
-			}
-
-			const PrevPage = () => {
-				if (numPage === 1) {
-					return
-				}
-				numPage--;
-				GeneratePDF(numPage);
-			}
-
-			const NextPage = () => {
-				if (numPage >= pdfDoc.numPages) {
-					return
-				}
-				numPage++;
-				GeneratePDF(numPage);
-			}
-
-			document.querySelector('#prev').addEventListener('click', PrevPage)
-			document.querySelector('#next').addEventListener('click', NextPage)
-
-			loadingTask.promise.then(pdfDoc_ => {
-				pdfDoc = pdfDoc_;
-				document.querySelector('#npages').innerHTML = pdfDoc.numPages;
-				GeneratePDF(numPage)
+						// Solve promise with the text retrieven from the page
+						resolve(finalString);
+					});
+				});
 			});
 		}
 
-		const startPdf = () => {
-			PDFStart('../mypdf/helloworld.pdf')
-		}
+		/**
+		 * Extract the test from the PDF
+		 */
 
-		window.addEventListener('load', startPdf);
+		var PDF_URL = '../mypdf/helloworld.pdf';
+		PDFJS.getDocument(PDF_URL).then(function (PDFDocumentInstance) {
+
+			var totalPages = PDFDocumentInstance.pdfInfo.numPages;
+			var pageNumber = 1;
+
+			// Extract the text
+			getPageText(pageNumber, PDFDocumentInstance).then(function (textPage) {
+				// Show the text of the page in the console
+				console.log(textPage);
+			});
+
+		}, function (reason) {
+			// PDF loading error
+			console.error(reason);
+		});
+
+
+
+		//const PDFStart = nameRoute => {
+		//	let loadingTask = pdfjsLib.getDocument(nameRoute),
+		//		pdfDoc = null,
+		//		canvas = document.querySelector('#cnv'),
+		//		ctx = canvas.getContext('2d'),
+		//		scale = 1.5,
+		//		numPage = 1;
+
+		//	const GeneratePDF = numPage => {
+
+		//		pdfDoc.getPage(numPage).then(page => {
+
+		//			let viewport = page.getViewport({ scale: scale });
+		//			canvas.height = viewport.height;
+		//			canvas.width = viewport.width;
+
+		//			let renderContext = {
+		//				canvasContext: ctx,
+		//				viewport: viewport
+		//			}
+
+		//			page.render(renderContext);
+		//		})
+		//		document.querySelector('#npages').innerHTML = numPage;
+
+		//	}
+
+		//	const PrevPage = () => {
+		//		if (numPage === 1) {
+		//			return
+		//		}
+		//		numPage--;
+		//		GeneratePDF(numPage);
+		//	}
+
+		//	const NextPage = () => {
+		//		if (numPage >= pdfDoc.numPages) {
+		//			return
+		//		}
+		//		numPage++;
+		//		GeneratePDF(numPage);
+		//	}
+
+		//	document.querySelector('#prev').addEventListener('click', PrevPage)
+		//	document.querySelector('#next').addEventListener('click', NextPage)
+
+		//	loadingTask.promise.then(pdfDoc_ => {
+		//		pdfDoc = pdfDoc_;
+		//		document.querySelector('#npages').innerHTML = pdfDoc.numPages;
+		//		GeneratePDF(numPage)
+		//	});
+		//}
+
+		//const startPdf = () => {
+		//	PDFStart('../mypdf/helloworld.pdf')
+		//}
+
+		//window.addEventListener('load', startPdf);
 
 
 	</script>
